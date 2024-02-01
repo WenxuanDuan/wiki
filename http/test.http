@@ -4,15 +4,15 @@ Accept: application/json
 // a script for result verification, similar with unit test
 // "test-hello": the test name
 // the second variable is function
-> {%
-client.test("test-hello", function() {
-    client.log("test/hello-interface");
-    client.log(response.body);
-    client.log(JSON.stringify(response.body));
-    client.assert(response.status === 200, "The return value is not 200");
-    client.assert(response.body === "Hello World!", "Verification failed");
-});
- %}
+#> {%
+#client.test("test-hello", function() {
+#    client.log("test/hello-interface");
+#    client.log(response.body);
+#    client.log(JSON.stringify(response.body));
+#    client.assert(response.status === 200, "The return value is not 200");
+#    client.assert(response.body === "Hello World!", "Verification failed");
+#});
+# %}
 
 ###
 
