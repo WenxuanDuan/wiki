@@ -1,0 +1,24 @@
+package com.wenxuanduan.wiki.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ @RestController: return a string
+ @Controller: return a page
+ @RestController = @Controller + Responsebody
+
+ HTTP Request: Get-query, post-add, put-update, delete-delete
+ 1. @GetMapping("/hello") == @RequestMapping(value="/hello", method=RequestMethod.GET)
+ 2. @PostMapping
+ 3. @PutMapping
+ 4. @DeleteMapping
+ **/
+@RestController
+public class TestController {
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello World!";
+    }
+}
