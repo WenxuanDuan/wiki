@@ -1,6 +1,7 @@
 package com.wenxuanduan.wiki.controller;
 
-import com.wenxuanduan.wiki.domain.Ebook;
+import com.wenxuanduan.wiki.resp.EbookResp;
+import com.wenxuanduan.wiki.req.EbookReq;
 import com.wenxuanduan.wiki.resp.CommonResp;
 import com.wenxuanduan.wiki.service.EbookService;
 import jakarta.annotation.Resource;
@@ -18,9 +19,9 @@ public class EbookController {
     private EbookService ebookService;
 
     @GetMapping("/list")
-    public CommonResp list() {
-        CommonResp<List<Ebook>> resp = new CommonResp<>();
-        List<Ebook> list = ebookService.list();
+    public CommonResp list(EbookReq req) {
+        CommonResp<List<EbookResp>> resp = new CommonResp<>();
+        List<EbookResp> list = ebookService.list(req);
         resp.setContent(list);
         return resp;
     }
