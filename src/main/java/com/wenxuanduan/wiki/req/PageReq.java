@@ -23,9 +23,10 @@ public class PageReq {
 
     @Override
     public String toString() {
-        return "PageReq{" +
-                "page=" + page +
-                ", size=" + size +
-                '}';
+        final StringBuffer sb = new StringBuffer("PageReq{");
+        sb.append("page=").append(page);
+        sb.append(", size=").append(size);
+        sb.append('}');
+        return sb.toString();
     }
 }
