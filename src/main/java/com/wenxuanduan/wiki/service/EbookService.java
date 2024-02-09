@@ -7,6 +7,7 @@ import com.wenxuanduan.wiki.domain.EbookExample;
 import com.wenxuanduan.wiki.mapper.EbookMapper;
 import com.wenxuanduan.wiki.req.EbookReq;
 import com.wenxuanduan.wiki.resp.EbookResp;
+import com.wenxuanduan.wiki.resp.PageResp;
 import com.wenxuanduan.wiki.util.CopyUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -23,13 +24,13 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
-        PageHelper.startPage(1,3);
+    public PageResp<EbookResp> list(EbookReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
@@ -49,6 +50,10 @@ public class EbookService {
         // copy list
         List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
 
-        return list;
+        PageResp<EbookResp> pageResp = new PageResp();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
     }
 }
