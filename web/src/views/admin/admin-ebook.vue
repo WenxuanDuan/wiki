@@ -18,7 +18,7 @@
           </template>
           <template v-if="column.title == 'Action'">
             <a-space size="small">
-              <a-button type="primary" @click="edit">
+              <a-button type="primary" @click="edit(record)">
                 Edit
               </a-button>
               <a-button type="primary" danger>
@@ -32,7 +32,23 @@
   </a-layout>
 
   <a-modal v-model:open="modalOpen" title="Ebook Edit" :confirm-loading="confirmLoading" @ok="handleModalOk">
-    <p>{{ modalText }}</p>
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="Cover">
+        <a-input v-model:value="ebook.cover" />
+      </a-form-item>
+      <a-form-item label="Name">
+        <a-input v-model:value="ebook.name" />
+      </a-form-item>
+      <a-form-item label="Category 1">
+        <a-input v-model:value="ebook.category1Id" />
+      </a-form-item>
+      <a-form-item label="Category 2">
+        <a-input v-model:value="ebook.category2Id" />
+      </a-form-item>
+      <a-form-item label="Description">
+        <a-input v-model:value="ebook.desc" type="textarea" />
+      </a-form-item>
+    </a-form>
   </a-modal>
 
 </template>
@@ -120,16 +136,16 @@
         });
       };
 
-      const modalText = ref<string>('Test');
+      const ebook = ref({});
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
 
-      const edit = () => {
+      const edit = (record : any) => {
         modalOpen.value = true;
+        ebook.value = record
       };
 
       const handleModalOk = () => {
-        modalText.value = 'The modal will be closed after two seconds';
         confirmLoading.value = true;
         setTimeout(() => {
           modalOpen.value = false;
@@ -151,7 +167,7 @@
         loading,
         handleTableChange,
         edit,
-        modalText,
+        ebook,
         modalOpen,
         confirmLoading,
         handleModalOk
