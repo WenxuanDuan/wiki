@@ -18,7 +18,7 @@
           </template>
           <template v-if="column.title == 'Action'">
             <a-space size="small">
-              <a-button type="primary">
+              <a-button type="primary" @click="edit">
                 Edit
               </a-button>
               <a-button type="primary" danger>
@@ -30,6 +30,11 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+
+  <a-modal v-model:open="modalOpen" title="Ebook Edit" :confirm-loading="confirmLoading" @ok="handleModalOk">
+    <p>{{ modalText }}</p>
+  </a-modal>
+
 </template>
 
 <script lang="ts">
@@ -108,11 +113,28 @@
        * trigger when clicking page
        */
       const handleTableChange = (pagination: any) => {
-        console.log("看看自带的分页参数都有啥：" + pagination);
+        console.log("Default pagination parameters：" + pagination);
         handleQuery({
           page: pagination.current,
           size: pagination.pageSize
         });
+      };
+
+      const modalText = ref<string>('Test');
+      const modalOpen = ref<boolean>(false);
+      const confirmLoading = ref<boolean>(false);
+
+      const edit = () => {
+        modalOpen.value = true;
+      };
+
+      const handleModalOk = () => {
+        modalText.value = 'The modal will be closed after two seconds';
+        confirmLoading.value = true;
+        setTimeout(() => {
+          modalOpen.value = false;
+          confirmLoading.value = false;
+        }, 2000);
       };
 
       onMounted(() => {
@@ -127,7 +149,12 @@
         pagination,
         columns,
         loading,
-        handleTableChange
+        handleTableChange,
+        edit,
+        modalText,
+        modalOpen,
+        confirmLoading,
+        handleModalOk
       }
     }
   });
