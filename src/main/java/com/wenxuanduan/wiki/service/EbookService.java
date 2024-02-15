@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.wenxuanduan.wiki.domain.Ebook;
 import com.wenxuanduan.wiki.domain.EbookExample;
 import com.wenxuanduan.wiki.mapper.EbookMapper;
-import com.wenxuanduan.wiki.req.EbookReq;
-import com.wenxuanduan.wiki.resp.EbookResp;
+import com.wenxuanduan.wiki.req.EbookQueryReq;
+import com.wenxuanduan.wiki.req.EbookSaveReq;
+import com.wenxuanduan.wiki.resp.EbookQueryResp;
 import com.wenxuanduan.wiki.resp.PageResp;
 import com.wenxuanduan.wiki.util.CopyUtil;
 import jakarta.annotation.Resource;
@@ -24,7 +25,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list(EbookReq req) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
@@ -48,12 +49,27 @@ public class EbookService {
 //        }
 
         // copy list
-        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
 
-        PageResp<EbookResp> pageResp = new PageResp();
+        PageResp<EbookQueryResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
 
         return pageResp;
+    }
+
+    /**
+     * save
+     */
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if (ObjectUtils.isEmpty(req.getId())) {
+            // add a new book
+            ebookMapper.insert(ebook);
+        }
+        else {
+            // update previous book
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }

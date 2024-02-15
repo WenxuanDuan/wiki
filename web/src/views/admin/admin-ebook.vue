@@ -147,10 +147,19 @@
 
       const handleModalOk = () => {
         confirmLoading.value = true;
-        setTimeout(() => {
-          modalOpen.value = false;
-          confirmLoading.value = false;
-        }, 2000);
+        axios.post("/ebook/save", ebook.value).then((response) => {
+          const data = response.data; // data = commonResp
+          if (data.success) {
+            modalOpen.value = false;
+            confirmLoading.value = false;
+
+            // reload current page
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize,
+            });
+          }
+        });
       };
 
       onMounted(() => {

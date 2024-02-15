@@ -1,6 +1,6 @@
-package com.wenxuanduan.wiki.resp;
+package com.wenxuanduan.wiki.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;
