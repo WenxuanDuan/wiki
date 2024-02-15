@@ -63,7 +63,7 @@ public class EbookService {
     }
 
     /**
-     * save
+     * Save
      */
     public void save(EbookSaveReq req) {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
@@ -76,5 +76,14 @@ public class EbookService {
             // update previous book
             ebookMapper.updateByPrimaryKey(ebook);
         }
+    }
+
+
+    /**
+     * Delete
+     * @param id
+     */
+    public void delete(Long id) {
+        ebookMapper.deleteByPrimaryKey(id);
     }
 }

@@ -26,9 +26,16 @@
               <a-button type="primary" @click="edit(record)">
                 Edit
               </a-button>
-              <a-button type="primary" danger>
-                Delete
-              </a-button>
+              <a-popconfirm
+                  title="Once deleted, the ebook could not be restored. Confirm the deletion?"
+                  ok-text="Delete"
+                  cancel-text="Cancel"
+                  @confirm="handleDelete(record.id)"
+              >
+                <a-button type="primary" danger>
+                  Delete
+                </a-button>
+              </a-popconfirm>
             </a-space>
           </template>
         </template>
@@ -51,7 +58,7 @@
         <a-input v-model:value="ebook.category2Id" />
       </a-form-item>
       <a-form-item label="Description">
-        <a-input v-model:value="ebook.desc" type="textarea" />
+        <a-input v-model:value="ebook.description" type="textarea" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -161,6 +168,22 @@
         ebook.value = {};
       };
 
+      /**
+       * Delete a ebook
+       */
+      const handleDelete = (id: number) => {
+        axios.delete("/ebook/delete/" + id).then((response) => {
+          const data = response.data; // data = commonResp
+          if (data.success) {
+            // reload current page
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize,
+            });
+          }
+        });
+      };
+
       const handleModalOk = () => {
         confirmLoading.value = true;
         axios.post("/ebook/save", ebook.value).then((response) => {
@@ -198,7 +221,9 @@
         ebook,
         modalOpen,
         confirmLoading,
-        handleModalOk
+        handleModalOk,
+
+        handleDelete
       }
     }
   });
