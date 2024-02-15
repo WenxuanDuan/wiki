@@ -10,6 +10,7 @@ import com.wenxuanduan.wiki.req.EbookSaveReq;
 import com.wenxuanduan.wiki.resp.EbookQueryResp;
 import com.wenxuanduan.wiki.resp.PageResp;
 import com.wenxuanduan.wiki.util.CopyUtil;
+import com.wenxuanduan.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class EbookService {
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
@@ -65,6 +69,7 @@ public class EbookService {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if (ObjectUtils.isEmpty(req.getId())) {
             // add a new book
+            ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         }
         else {

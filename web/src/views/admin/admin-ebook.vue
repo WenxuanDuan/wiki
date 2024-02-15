@@ -3,6 +3,11 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
+      <p>
+        <a-button type="primary" @click="add()" size="large">
+          Add
+        </a-button>
+      </p>
       <a-table
           :columns="columns"
           :row-key="record => record.id"
@@ -140,9 +145,20 @@
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
 
+      /**
+       * Edit ebook
+       */
       const edit = (record : any) => {
         modalOpen.value = true;
         ebook.value = record
+      };
+
+      /**
+       * Add a new ebook
+       */
+      const add = () => {
+        modalOpen.value = true;
+        ebook.value = {};
       };
 
       const handleModalOk = () => {
@@ -175,7 +191,10 @@
         columns,
         loading,
         handleTableChange,
+
         edit,
+        add,
+
         ebook,
         modalOpen,
         confirmLoading,
