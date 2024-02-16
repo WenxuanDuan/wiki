@@ -1,8 +1,11 @@
 package com.wenxuanduan.wiki.req;
 
+import jakarta.validation.constraints.NotNull;
+
 public class EbookSaveReq {
     private Long id;
 
+    @NotNull(message = "The name should not be empty!")
     private String name;
 
     private Long category1Id;
