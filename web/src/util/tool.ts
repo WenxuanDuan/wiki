@@ -21,9 +21,34 @@ export class Tool {
      * copy object
      * @param obj
      */
-    public static copy (obj: object) {
+    public static copy (obj: Record<string, unknown>) {
         if (Tool.isNotEmpty(obj)) {
             return JSON.parse(JSON.stringify(obj));
         }
+    }
+
+    /**
+     * transform array to tree architecture using recursion
+     */
+    public static array2Tree (array: any, parentId: number) {
+        if (Tool.isEmpty(array)) {
+            return [];
+        }
+
+        const result = [];
+        for (let i = 0; i < array.length; i++) {
+            const c = array[i];
+            // console.log(Number(c.parent), Number(parentId));
+            if (Number(c.parent) === Number(parentId)) {
+                result.push(c);
+
+                // check all children for current node using recursion
+                const children = Tool.array2Tree(array, c.id);
+                if (Tool.isNotEmpty(children)) {
+                    c.children = children;
+                }
+            }
+        }
+        return result;
     }
 }
