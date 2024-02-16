@@ -1,8 +1,14 @@
 package com.wenxuanduan.wiki.req;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+
 public class PageReq {
+    @NotNull(message = "The page should not be empty!")
     private int page;
 
+    @NotNull(message = "The number of item per page should not be empty!")
+    @Max(value = 1000, message = "The number of item per page should not exceed 1000!")
     private int size;
 
     public int getPage() {
