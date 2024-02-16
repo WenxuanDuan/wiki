@@ -2,13 +2,15 @@ package com.wenxuanduan.wiki.controller;
 
 import com.wenxuanduan.wiki.req.CategoryQueryReq;
 import com.wenxuanduan.wiki.req.CategorySaveReq;
-import com.wenxuanduan.wiki.resp.CommonResp;
 import com.wenxuanduan.wiki.resp.CategoryQueryResp;
+import com.wenxuanduan.wiki.resp.CommonResp;
 import com.wenxuanduan.wiki.resp.PageResp;
 import com.wenxuanduan.wiki.service.CategoryService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/category")
@@ -24,6 +26,15 @@ public class CategoryController {
         resp.setContent(list);
         return resp;
     }
+
+    @GetMapping("/all")
+    public CommonResp all() {
+        CommonResp<List<CategoryQueryResp>> resp = new CommonResp<>();
+        List<CategoryQueryResp> list = categoryService.all();
+        resp.setContent(list);
+        return resp;
+    }
+
 
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody CategorySaveReq req) {
