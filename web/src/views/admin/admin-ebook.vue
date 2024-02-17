@@ -34,6 +34,9 @@
           <template v-if="column.title == 'Cover'">
             <img :src="text" alt="avatar" />
           </template>
+          <template v-if="column.title == 'Category'">
+            <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+          </template>
           <template v-if="column.title == 'Action'">
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">
@@ -108,13 +111,8 @@
           dataIndex: 'name'
         },
         {
-          title: 'Category1',
-          key: 'category1Id',
-          dataIndex: 'category1Id'
-        },
-        {
-          title: 'Category2',
-          dataIndex: 'category2Id'
+          title: 'Category',
+          dataIndex: { customRender: 'category' }
         },
         {
           title: 'DocumentCount',
@@ -234,6 +232,7 @@
       };
 
       const level1 = ref();
+      let categorys: any;
       /**
        *  query all categories
        */
@@ -243,7 +242,7 @@
           loading.value = true;
           const data = response.data;
           if (data.success) {
-            const categorys = data.content;
+            categorys = data.content;
             console.log("Original Array: ", categorys);
 
             level1.value = [];
@@ -254,7 +253,17 @@
             message.error(data.message);
           }
         })
-      }
+      };
+
+      const getCategoryName = (cid: number) => {
+        let result = "";
+        categorys.forEach((item: any) => {
+          if (item.id === cid) {
+            result = item.name;
+          }
+        });
+        return result;
+      };
 
       onMounted(() => {
         handleQueryCategory();
@@ -272,6 +281,7 @@
         loading,
         handleTableChange,
         handleQuery,
+        getCategoryName,
 
         edit,
         add,
