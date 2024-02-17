@@ -64,11 +64,12 @@
       <a-form-item label="Name">
         <a-input v-model:value="ebook.name" />
       </a-form-item>
-      <a-form-item label="Category 1">
-        <a-input v-model:value="ebook.category1Id" />
-      </a-form-item>
-      <a-form-item label="Category 2">
-        <a-input v-model:value="ebook.category2Id" />
+      <a-form-item label="Category">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
+        />
       </a-form-item>
       <a-form-item label="Description">
         <a-input v-model:value="ebook.description" type="textarea" />
@@ -170,9 +171,34 @@
         });
       };
 
-      const ebook = ref({});
+      // ---------- Form --------
+      /**
+       * array, [100, 101], i.e., 前端开发 / Vue
+       */
+      const categoryIds = ref();
+      const ebook = ref();
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
+      const handleModalOk = () => {
+        confirmLoading.value = true;
+        ebook.value.category1Id = categoryIds.value[0];
+        ebook.value.category2Id = categoryIds.value[1];
+        axios.post("/ebook/save", ebook.value).then((response) => {
+          confirmLoading.value = false;
+          const data = response.data; // data = commonResp
+          if (data.success) {
+            modalOpen.value = false;
+            // reload current page
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize,
+            });
+          }
+          else {
+            message.error(data.message);
+          }
+        });
+      };
 
       /**
        * Edit ebook
@@ -180,6 +206,7 @@
       const edit = (record : any) => {
         modalOpen.value = true;
         ebook.value = Tool.copy(record);
+        categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id]
       };
 
       /**
@@ -206,26 +233,31 @@
         });
       };
 
-      const handleModalOk = () => {
-        confirmLoading.value = true;
-        axios.post("/ebook/save", ebook.value).then((response) => {
-          confirmLoading.value = false;
-          const data = response.data; // data = commonResp
+      const level1 = ref();
+      /**
+       *  query all categories
+       */
+      const handleQueryCategory = () => {
+        loading.value = true;
+        axios.get("/category/all").then((response) => {
+          loading.value = true;
+          const data = response.data;
           if (data.success) {
-            modalOpen.value = false;
-            // reload current page
-            handleQuery({
-              page: pagination.value.current,
-              size: pagination.value.pageSize,
-            });
+            const categorys = data.content;
+            console.log("Original Array: ", categorys);
+
+            level1.value = [];
+            level1.value = Tool.array2Tree(categorys, 0);
+            console.log("Tree Category: ", level1.value);
           }
           else {
             message.error(data.message);
           }
-        });
-      };
+        })
+      }
 
       onMounted(() => {
+        handleQueryCategory();
         handleQuery({
           page: 1,
           size: pagination.value.pageSize,
@@ -248,6 +280,8 @@
         modalOpen,
         confirmLoading,
         handleModalOk,
+        categoryIds,
+        level1,
 
         handleDelete
       }
