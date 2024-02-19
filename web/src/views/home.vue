@@ -7,10 +7,8 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link :to="'/'">
-            <MailOutlined />
-            <span>Welcome</span>
-          </router-link>
+          <MailOutlined />
+          <span>Welcome</span>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
@@ -25,7 +23,10 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>Welcome to XX wiki! </h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -83,8 +84,11 @@
         })
       };
 
-      const handleClick = () => {
-        console.log("Menu Click");
+      const isShowWelcome = ref(true);
+
+      const handleClick = (value: any) => {
+        // console.log("Menu Click", value);
+        isShowWelcome.value = value.key === 'welcome';
       };
 
       onMounted(() => {
@@ -119,6 +123,8 @@
 
         handleClick,
         level1,
+
+        isShowWelcome,
       }
     }
   });
