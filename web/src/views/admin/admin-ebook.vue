@@ -249,6 +249,12 @@
             level1.value = [];
             level1.value = Tool.array2Tree(categorys, 0);
             console.log("Tree Category: ", level1.value);
+
+            // load ebooks after categories
+            handleQuery({
+              page: 1,
+              size: pagination.value.pageSize,
+            });
           }
           else {
             message.error(data.message);
@@ -268,10 +274,6 @@
 
       onMounted(() => {
         handleQueryCategory();
-        handleQuery({
-          page: 1,
-          size: pagination.value.pageSize,
-        });
       });
 
       return {
