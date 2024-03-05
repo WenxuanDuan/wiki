@@ -39,6 +39,11 @@
           </template>
           <template v-if="column.title == 'Action'">
             <a-space size="small">
+              <router-link to="/admin/doc">
+                <a-button type="primary">
+                  Doc Management
+                </a-button>
+              </router-link>
               <a-button type="primary" @click="edit(record)">
                 Edit
               </a-button>
@@ -48,10 +53,10 @@
                   cancel-text="Cancel"
                   @confirm="handleDelete(record.id)"
               >
-                <a-button type="primary" danger>
-                  Delete
-                </a-button>
               </a-popconfirm>
+              <a-button type="primary" danger>
+                Delete
+              </a-button>
             </a-space>
           </template>
         </template>
