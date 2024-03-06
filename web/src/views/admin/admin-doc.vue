@@ -190,7 +190,8 @@
           confirmLoading.value = false;
           const data = response.data; // data = commonResp
           if (data.success) {
-            modalOpen.value = false;
+            // modalOpen.value = false;
+            message.success("Save Successfully!")
             // reload current page
             handleQuery();
           }
@@ -288,6 +289,9 @@
        * Edit doc
        */
       const edit = (record : any) => {
+        // clear rich text box
+        editor.txt.html("");
+
         modalOpen.value = true;
         doc.value = Tool.copy(record);
         handleQueryContent();
@@ -314,6 +318,9 @@
        * Add a new doc
        */
       const add = () => {
+        // clear rich text box
+        editor.txt.html("");
+
         modalOpen.value = true;
         doc.value = {
           ebookId: route.query.ebookId
