@@ -56,19 +56,21 @@
       <a-form-item label="Name">
         <a-input v-model:value="doc.name" />
       </a-form-item>
-      <a-form-item label="Parent Doc">
-        <a-select
-            ref="select"
-            v-model:value="doc.parent"
-        >
-          <a-select-option value="0">
-            NULL
-          </a-select-option>
-          <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">
-            {{c.name}}
-          </a-select-option>
-        </a-select>
-      </a-form-item>
+        <a-form-item label="Parent Doc">
+          <a-tree-select
+              v-model:value="doc.parent"
+              show-search
+              style="width: 100%"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              placeholder="Please select parent doc"
+              allow-clear
+              tree-default-expand-all
+              :tree-data="treeSelectData"
+              tree-node-filter-prop="label"
+              :replaceFields="{label: 'name', value: 'id'}"
+          >
+          </a-tree-select>
+        </a-form-item>
       <a-form-item label="Sort">
         <a-input v-model:value="doc.sort" />
       </a-form-item>
@@ -128,6 +130,7 @@
        */
       const handleQuery = () => {
         loading.value = true;
+        level1.value = [];
         axios.get("/doc/all").then((response) => {
           loading.value = false;
           const data = response.data;
@@ -145,9 +148,44 @@
         });
       };
 
+      const treeSelectData = ref();
+      treeSelectData.value = [];
       const doc = ref({});
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
+
+      /**
+       * set one node and its children to disabled
+       */
+      const setDisable = (treeSelectData: any, id: any) => {
+        // console.log(treeSelectData, id);
+
+        // traverse array, i.e., traverse all nodes of one level
+        for (let i = 0; i < treeSelectData.length; i ++) {
+          const node = treeSelectData[i];
+          if (node.id === id) {
+            // if current node is target node
+            console.log("disabled", node);
+            // set target node to disabled
+            node.disabled = true;
+
+            // traverse all children and disable them
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              for (let j = 0; j < children.length; j ++) {
+                setDisable(children, children[j].id);
+              }
+            }
+          }
+          else {
+            // if current node is not traget node, then check its children
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              setDisable(children, id);
+            }
+          }
+        }
+      };
 
       /**
        * Edit doc
@@ -155,6 +193,13 @@
       const edit = (record : any) => {
         modalOpen.value = true;
         doc.value = Tool.copy(record);
+
+        // could not choose current node and its children as parent node
+        treeSelectData.value = Tool.copy(level1.value);
+        setDisable(treeSelectData.value, record.id);
+
+        // add a null for select tree
+        treeSelectData.value.unshift({id: 0, name: 'NULL'});
       };
 
       /**
@@ -163,6 +208,11 @@
       const add = () => {
         modalOpen.value = true;
         doc.value = {};
+
+        treeSelectData.value = Tool.copy(level1.value);
+
+        // add a NULL for select tree
+        treeSelectData.value.unshift({id: 0, name: 'NULL'});
       };
 
       /**
@@ -214,7 +264,9 @@
         confirmLoading,
         handleModalOk,
 
-        handleDelete
+        handleDelete,
+
+        treeSelectData
       }
     }
   });

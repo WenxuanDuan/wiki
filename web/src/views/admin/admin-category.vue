@@ -128,6 +128,7 @@
        */
       const handleQuery = () => {
         loading.value = true;
+        level1.value = [];
         axios.get("/category/all").then((response) => {
           loading.value = false;
           const data = response.data;
