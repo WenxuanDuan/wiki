@@ -3,7 +3,7 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-row>
+      <a-row :gutter="24">
         <a-col :span="8">
           <p>
             <a-form layout="inline" :model="param">
@@ -25,15 +25,16 @@
               :data-source="level1"
               :loading="loading"
               :pagination="false"
+              size="small"
           >
 
             <template #bodyCell="{ column, text, record }">
-              <template v-if="column.title == 'Cover'">
-                <img :src="text" alt="avatar" />
+              <template v-if="column.title == 'Name'">
+                {{record.sort}} {{text}}
               </template>
               <template v-if="column.title == 'Action'">
                 <a-space size="small">
-                  <a-button type="primary" @click="edit(record)">
+                  <a-button type="primary" @click="edit(record)" size="small">
                     Edit
                   </a-button>
                   <a-popconfirm
@@ -42,7 +43,7 @@
                       cancel-text="Cancel"
                       @confirm="handleDelete(record.id)"
                   >
-                    <a-button type="primary" danger>
+                    <a-button type="primary" danger size="small">
                       Delete
                     </a-button>
                   </a-popconfirm>
@@ -52,11 +53,20 @@
           </a-table>
         </a-col>
         <a-col :span="16">
-          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-            <a-form-item label="Name">
-              <a-input v-model:value="doc.name" />
+          <p>
+            <a-form layout="inline" :model="param">
+              <a-form-item>
+                <a-button type="primary" @click="handleSave()">
+                  Save
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" layout="vertical">
+            <a-form-item>
+              <a-input v-model:value="doc.name" placeholder="Name"/>
             </a-form-item>
-            <a-form-item label="Parent Doc">
+            <a-form-item>
               <a-tree-select
                   v-model:value="doc.parent"
                   show-search
@@ -71,10 +81,10 @@
               >
               </a-tree-select>
             </a-form-item>
-            <a-form-item label="Sort">
-              <a-input v-model:value="doc.sort" />
+            <a-form-item>
+              <a-input v-model:value="doc.sort" placeholder="Sort"/>
             </a-form-item>
-            <a-form-item label="Content">
+            <a-form-item>
               <div id="content"></div>
             </a-form-item>
           </a-form>
@@ -118,15 +128,6 @@
         {
           title: 'Name',
           dataIndex: 'name'
-        },
-        {
-          title: 'Parent Doc',
-          key: 'parent',
-          dataIndex: 'parent'
-        },
-        {
-          title: 'Sort',
-          dataIndex: 'sort'
         },
         {
           title: 'Action',
@@ -179,6 +180,7 @@
       let editor:any;
       const createEditor = () => {
         const editor = new E('#content');
+        editor.config.zIndex = 0;
         editor.create();
       };
 
@@ -266,15 +268,15 @@
         // add a null for select tree
         treeSelectData.value.unshift({id: 0, name: 'NULL'});
 
-        setTimeout(function () {
-          if (editor == null) {
-            createEditor();
-          }
-          else {
-            editor.destroy();
-            createEditor();
-          }
-        });
+        // setTimeout(function () {
+        //   if (editor == null) {
+        //     createEditor();
+        //   }
+        //   else {
+        //     editor.destroy();
+        //     createEditor();
+        //   }
+        // });
       };
 
       /**
@@ -291,15 +293,15 @@
         // add a NULL for select tree
         treeSelectData.value.unshift({id: 0, name: 'NULL'});
 
-        setTimeout(function () {
-          if (editor == null) {
-            createEditor();
-          }
-          else {
-            editor.destroy();
-            createEditor();
-          }
-        });
+        // setTimeout(function () {
+        //   if (editor == null) {
+        //     createEditor();
+        //   }
+        //   else {
+        //     editor.destroy();
+        //     createEditor();
+        //   }
+        // });
       };
 
       /**
@@ -330,7 +332,7 @@
         });
       };
 
-      const handleModalOk = () => {
+      const handleSave = () => {
         confirmLoading.value = true;
         axios.post("/doc/save", doc.value).then((response) => {
           confirmLoading.value = false;
@@ -365,7 +367,7 @@
         doc,
         modalOpen,
         confirmLoading,
-        handleModalOk,
+        handleSave,
 
         handleDelete,
 
