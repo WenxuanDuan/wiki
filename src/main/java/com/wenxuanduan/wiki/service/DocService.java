@@ -2,8 +2,10 @@ package com.wenxuanduan.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wenxuanduan.wiki.domain.Content;
 import com.wenxuanduan.wiki.domain.Doc;
 import com.wenxuanduan.wiki.domain.DocExample;
+import com.wenxuanduan.wiki.mapper.ContentMapper;
 import com.wenxuanduan.wiki.mapper.DocMapper;
 import com.wenxuanduan.wiki.req.DocQueryReq;
 import com.wenxuanduan.wiki.req.DocSaveReq;
@@ -25,6 +27,9 @@ public class DocService {
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -72,14 +77,25 @@ public class DocService {
      */
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content content = CopyUtil.copy(req, Content.class);
         if (ObjectUtils.isEmpty(req.getId())) {
             // add a new book
             doc.setId(snowFlake.nextId());
             docMapper.insert(doc);
+
+            // add content
+            content.setId(doc.getId());
+            contentMapper.insert(content);
         }
         else {
             // update previous book
             docMapper.updateByPrimaryKey(doc);
+
+            // update content
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if (count == 0) {
+                contentMapper.insert(content);
+            }
         }
     }
 

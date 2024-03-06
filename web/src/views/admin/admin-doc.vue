@@ -175,16 +175,29 @@
 
       const treeSelectData = ref();
       treeSelectData.value = [];
-      const doc = ref({});
+      const doc = ref();
+      doc.value = {};
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
 
       // initiate rich text
-      let editor:any;
-      const createEditor = () => {
-        const editor = new E('#content');
-        editor.config.zIndex = 0;
-        editor.create();
+      const editor = new E('#content');
+
+      const handleSave = () => {
+        confirmLoading.value = true;
+        doc.value.content = editor.txt.html();
+        axios.post("/doc/save", doc.value).then((response) => {
+          confirmLoading.value = false;
+          const data = response.data; // data = commonResp
+          if (data.success) {
+            modalOpen.value = false;
+            // reload current page
+            handleQuery();
+          }
+          else {
+            message.error(data.message);
+          }
+        });
       };
 
       /**
@@ -335,25 +348,9 @@
         });
       };
 
-      const handleSave = () => {
-        confirmLoading.value = true;
-        axios.post("/doc/save", doc.value).then((response) => {
-          confirmLoading.value = false;
-          const data = response.data; // data = commonResp
-          if (data.success) {
-            modalOpen.value = false;
-            // reload current page
-            handleQuery();
-          }
-          else {
-            message.error(data.message);
-          }
-        });
-      };
-
       onMounted(() => {
         handleQuery();
-        createEditor();
+        editor.create();
       });
 
       return {
