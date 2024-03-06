@@ -80,11 +80,12 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, onMounted, ref, createVNode } from 'vue';
   import axios from 'axios';
-  import { message } from 'ant-design-vue';
+  import { message, Modal } from 'ant-design-vue';
   import {Tool} from "@/util/tool";
   import { useRoute } from 'vue-router';
+  import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 
   export default defineComponent({
     name: 'AdminDoc',
@@ -200,7 +201,8 @@
       /**
        * find all nodes in the subtree
        */
-      const ids: Array<string> = [];
+      const deleteIds: Array<string> = [];
+      const deleteNames: Array<string> = [];
       const getDeleteIds = (treeSelectData: any, id: any) => {
         // console.log(treeSelectData, id);
 
@@ -211,7 +213,8 @@
             // if current node is target node
             console.log("delete", node);
             // put this node to result set
-            ids.push(id);
+            deleteIds.push(id);
+            deleteNames.push(node.name);
 
             // traverse all children
             const children = node.children;
@@ -267,13 +270,21 @@
       const handleDelete = (id: number) => {
         // console.log(level1, level1.value, id);
         getDeleteIds(level1.value, id);
-        // console.log(ids);
-        axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
-          const data = response.data; // data = commonResp
-          if (data.success) {
-            // reload current page
-            handleQuery();
-          }
+
+        Modal.confirm({
+          title: 'Important Reminder',
+          icon: createVNode(ExclamationCircleOutlined),
+          content: 'Will delete: [' + deleteNames.join(", ") + "]. Could not recover once deleted. Confirm deletion? ",
+          onOk() {
+            // console.log(ids);
+            axios.delete("/doc/delete/" + deleteIds.join(",")).then((response) => {
+              const data = response.data; // data = commonResp
+              if (data.success) {
+                // reload current page
+                handleQuery();
+              }
+            });
+          },
         });
       };
 
