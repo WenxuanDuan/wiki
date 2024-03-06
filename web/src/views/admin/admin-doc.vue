@@ -187,10 +187,45 @@
             }
           }
           else {
-            // if current node is not traget node, then check its children
+            // if current node is not target node, then check its children
             const children = node.children;
             if (Tool.isNotEmpty(children)) {
               setDisable(children, id);
+            }
+          }
+        }
+      };
+
+
+      /**
+       * find all nodes in the subtree
+       */
+      const ids: Array<string> = [];
+      const getDeleteIds = (treeSelectData: any, id: any) => {
+        // console.log(treeSelectData, id);
+
+        // traverse array, i.e., traverse all nodes of one level
+        for (let i = 0; i < treeSelectData.length; i ++) {
+          const node = treeSelectData[i];
+          if (node.id === id) {
+            // if current node is target node
+            console.log("delete", node);
+            // put this node to result set
+            ids.push(id);
+
+            // traverse all children
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              for (let j = 0; j < children.length; j ++) {
+                getDeleteIds(children, children[j].id);
+              }
+            }
+          }
+          else {
+            // if current node is not the target node, then check its children
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              getDeleteIds(children, id);
             }
           }
         }
@@ -230,7 +265,10 @@
        * Delete a doc
        */
       const handleDelete = (id: number) => {
-        axios.delete("/doc/delete/" + id).then((response) => {
+        // console.log(level1, level1.value, id);
+        getDeleteIds(level1.value, id);
+        // console.log(ids);
+        axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
           const data = response.data; // data = commonResp
           if (data.success) {
             // reload current page
