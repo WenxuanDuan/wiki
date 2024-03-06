@@ -3,82 +3,89 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <p>
-        <a-form layout="inline" :model="param">
-          <a-form-item>
-            <a-button type="primary" @click="handleQuery()">
-              Refresh
-            </a-button>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="add()">
-              Add
-            </a-button>
-          </a-form-item>
-        </a-form>
-      </p>
-      <a-table
-          :columns="columns"
-          :row-key="record => record.id"
-          :data-source="level1"
-          :loading="loading"
-          :pagination="false"
-      >
-
-        <template #bodyCell="{ column, text, record }">
-          <template v-if="column.title == 'Cover'">
-            <img :src="text" alt="avatar" />
-          </template>
-          <template v-if="column.title == 'Action'">
-            <a-space size="small">
-              <a-button type="primary" @click="edit(record)">
-                Edit
-              </a-button>
-              <a-popconfirm
-                  title="Once deleted, the doc could not be restored. Confirm the deletion?"
-                  ok-text="Delete"
-                  cancel-text="Cancel"
-                  @confirm="handleDelete(record.id)"
-              >
-                <a-button type="primary" danger>
-                  Delete
+      <a-row>
+        <a-col :span="8">
+          <p>
+            <a-form layout="inline" :model="param">
+              <a-form-item>
+                <a-button type="primary" @click="handleQuery()">
+                  Refresh
                 </a-button>
-              </a-popconfirm>
-            </a-space>
-          </template>
-        </template>
-      </a-table>
+              </a-form-item>
+              <a-form-item>
+                <a-button type="primary" @click="add()">
+                  Add
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-table
+              :columns="columns"
+              :row-key="record => record.id"
+              :data-source="level1"
+              :loading="loading"
+              :pagination="false"
+          >
+
+            <template #bodyCell="{ column, text, record }">
+              <template v-if="column.title == 'Cover'">
+                <img :src="text" alt="avatar" />
+              </template>
+              <template v-if="column.title == 'Action'">
+                <a-space size="small">
+                  <a-button type="primary" @click="edit(record)">
+                    Edit
+                  </a-button>
+                  <a-popconfirm
+                      title="Once deleted, the doc could not be restored. Confirm the deletion?"
+                      ok-text="Delete"
+                      cancel-text="Cancel"
+                      @confirm="handleDelete(record.id)"
+                  >
+                    <a-button type="primary" danger>
+                      Delete
+                    </a-button>
+                  </a-popconfirm>
+                </a-space>
+              </template>
+            </template>
+          </a-table>
+        </a-col>
+        <a-col :span="16">
+          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+            <a-form-item label="Name">
+              <a-input v-model:value="doc.name" />
+            </a-form-item>
+            <a-form-item label="Parent Doc">
+              <a-tree-select
+                  v-model:value="doc.parent"
+                  show-search
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  placeholder="Please select parent doc"
+                  allow-clear
+                  tree-default-expand-all
+                  :tree-data="treeSelectData"
+                  tree-node-filter-prop="label"
+                  :replaceFields="{label: 'name', value: 'id'}"
+              >
+              </a-tree-select>
+            </a-form-item>
+            <a-form-item label="Sort">
+              <a-input v-model:value="doc.sort" />
+            </a-form-item>
+            <a-form-item label="Content">
+              <div id="content"></div>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
     </a-layout-content>
   </a-layout>
 
-  <a-modal v-model:open="modalOpen" title="Doc Edit" :confirm-loading="confirmLoading" @ok="handleModalOk">
-    <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="Name">
-        <a-input v-model:value="doc.name" />
-      </a-form-item>
-        <a-form-item label="Parent Doc">
-          <a-tree-select
-              v-model:value="doc.parent"
-              show-search
-              style="width: 100%"
-              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-              placeholder="Please select parent doc"
-              allow-clear
-              tree-default-expand-all
-              :tree-data="treeSelectData"
-              tree-node-filter-prop="label"
-              :replaceFields="{label: 'name', value: 'id'}"
-          >
-          </a-tree-select>
-        </a-form-item>
-      <a-form-item label="Sort">
-        <a-input v-model:value="doc.sort" />
-      </a-form-item>
-      <a-form-item label="Content">
-        <div id="content"></div>
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal v-model:open="modalOpen" title="Doc Edit" :confirm-loading="confirmLoading" @ok="handleModalOk">-->
+
+<!--  </a-modal>-->
 
 </template>
 
@@ -341,6 +348,7 @@
 
       onMounted(() => {
         handleQuery();
+        createEditor();
       });
 
       return {
