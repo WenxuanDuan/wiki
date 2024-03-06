@@ -76,6 +76,14 @@ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) val
 insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (5, 1, 3, '文档2.2', 2, 0, 0);
 insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) values (6, 1, 5, '文档2.2.1', 1, 0, 0);
 
+-- doc content
+drop table if exists `content`;
+create table `content` (
+    `id` bigint not null comment 'doc id',
+    `content` mediumtext not null comment 'content',
+    primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment = 'doc content';
+
 drop table if exists `demo`;
 create table `demo` (
                         `id` bigint not null comment 'id',
