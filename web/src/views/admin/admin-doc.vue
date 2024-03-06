@@ -268,6 +268,10 @@
        * Delete a doc
        */
       const handleDelete = (id: number) => {
+        // clear arrays, otherwise they will be increased continually
+        deleteIds.length = 0;
+        deleteNames.length = 0;
+
         // console.log(level1, level1.value, id);
         getDeleteIds(level1.value, id);
 
