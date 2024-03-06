@@ -233,7 +233,6 @@
         }
       };
 
-
       /**
        * find all nodes in the subtree
        */
@@ -271,11 +270,27 @@
       };
 
       /**
+       * content query
+       */
+      const handleQueryContent = () => {
+        axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+          const data = response.data;
+          if (data.success) {
+            editor.txt.html((data.content));
+          }
+          else {
+            message.error(data.message);
+          }
+        });
+      };
+
+      /**
        * Edit doc
        */
       const edit = (record : any) => {
         modalOpen.value = true;
         doc.value = Tool.copy(record);
+        handleQueryContent();
 
         // could not choose current node and its children as parent node
         treeSelectData.value = Tool.copy(level1.value);
