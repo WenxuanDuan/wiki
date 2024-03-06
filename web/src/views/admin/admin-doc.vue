@@ -74,6 +74,9 @@
       <a-form-item label="Sort">
         <a-input v-model:value="doc.sort" />
       </a-form-item>
+      <a-form-item label="Content">
+        <div id="content"></div>
+      </a-form-item>
     </a-form>
   </a-modal>
 
@@ -86,6 +89,7 @@
   import {Tool} from "@/util/tool";
   import { useRoute } from 'vue-router';
   import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
+  import E from 'wangeditor'
 
   export default defineComponent({
     name: 'AdminDoc',
@@ -163,6 +167,13 @@
       const doc = ref({});
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
+
+      // initiate rich text
+      let editor:any;
+      const createEditor = () => {
+        const editor = new E('#content');
+        editor.create();
+      };
 
       /**
        * set one node and its children to disabled
@@ -247,6 +258,16 @@
 
         // add a null for select tree
         treeSelectData.value.unshift({id: 0, name: 'NULL'});
+
+        setTimeout(function () {
+          if (editor == null) {
+            createEditor();
+          }
+          else {
+            editor.destroy();
+            createEditor();
+          }
+        });
       };
 
       /**
@@ -262,6 +283,16 @@
 
         // add a NULL for select tree
         treeSelectData.value.unshift({id: 0, name: 'NULL'});
+
+        setTimeout(function () {
+          if (editor == null) {
+            createEditor();
+          }
+          else {
+            editor.destroy();
+            createEditor();
+          }
+        });
       };
 
       /**
