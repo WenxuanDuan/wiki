@@ -1,5 +1,6 @@
 package com.wenxuanduan.wiki.controller;
 
+import com.wenxuanduan.wiki.exception.BusinessException;
 import com.wenxuanduan.wiki.resp.CommonResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,36 @@ public class ControllerExceptionHandler {
         LOG.warn("Validation of parameters failed：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         commonResp.setSuccess(false);
         commonResp.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return commonResp;
+    }
+
+    /**
+     * Exception Handler
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BusinessException.class)
+    @ResponseBody
+    public CommonResp validExceptionHandler(BusinessException e) {
+        CommonResp commonResp = new CommonResp();
+        LOG.warn("Business Exception：{}", e.getCode().getDesc());
+        commonResp.setSuccess(false);
+        commonResp.setMessage(e.getCode().getDesc());
+        return commonResp;
+    }
+
+    /**
+     * Exception Handler
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = Exception.class)
+    @ResponseBody
+    public CommonResp validExceptionHandler(Exception e) {
+        CommonResp commonResp = new CommonResp();
+        LOG.error("The system is abnormal：", e);
+        commonResp.setSuccess(false);
+        commonResp.setMessage("The system is abnormal. Please contact the administrator!");
         return commonResp;
     }
 }

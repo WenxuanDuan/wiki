@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wenxuanduan.wiki.domain.User;
 import com.wenxuanduan.wiki.domain.UserExample;
+import com.wenxuanduan.wiki.exception.BusinessException;
+import com.wenxuanduan.wiki.exception.BusinessExceptionCode;
 import com.wenxuanduan.wiki.mapper.UserMapper;
 import com.wenxuanduan.wiki.req.UserQueryReq;
 import com.wenxuanduan.wiki.req.UserSaveReq;
@@ -15,6 +17,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -68,9 +71,17 @@ public class UserService {
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
         if (ObjectUtils.isEmpty(req.getId())) {
-            // add a new book
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
+
+            User userDB = selectByLoginName(req.getLoginName());
+            if (ObjectUtils.isEmpty(userDB)) {
+                // add a new book
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            }
+            else {
+                // Already exists the same loginName
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
         }
         else {
             // update previous book
@@ -85,5 +96,18 @@ public class UserService {
      */
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public User selectByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(userList)) {
+            return null;
+        }
+        else {
+            return userList.get(0);
+        }
     }
 }
