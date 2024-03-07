@@ -74,10 +74,10 @@
                   show-search
                   style="width: 100%"
                   :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  :tree-data="treeSelectData"
                   placeholder="Please select parent doc"
                   allow-clear
                   tree-default-expand-all
-                  :tree-data="treeSelectData"
                   tree-node-filter-prop="label"
                   :replaceFields="{label: 'name', value: 'id'}"
               >
@@ -125,6 +125,9 @@
       param.value = {};
       const docs = ref();
       const loading = ref(false);
+      // the attributes of tree select component will update according to currently editing node
+      const treeSelectData = ref();
+      treeSelectData.value = [];
 
       const columns = [
         {
@@ -156,7 +159,7 @@
       const handleQuery = () => {
         loading.value = true;
         level1.value = [];
-        axios.get("/doc/all").then((response) => {
+        axios.get("/doc/all/" + route.query.ebookId).then((response) => {
           loading.value = false;
           const data = response.data;
           if (data.success) {
@@ -166,6 +169,9 @@
             level1.value = [];
             level1.value = Tool.array2Tree(docs.value, 0);
             console.log("Tree Architecture: ", level1);
+
+            treeSelectData.value = Tool.copy(level1.value);
+            treeSelectData.value.unshift({id: 0, name: 'NULL'});
           }
           else {
             message.error(data.message);
@@ -173,8 +179,6 @@
         });
       };
 
-      const treeSelectData = ref();
-      treeSelectData.value = [];
       const doc = ref();
       doc.value = {};
       const modalOpen = ref<boolean>(false);
@@ -182,6 +186,7 @@
 
       // initiate rich text
       const editor = new E('#content');
+      editor.config.zIndex = 0;
 
       const handleSave = () => {
         confirmLoading.value = true;
