@@ -1,6 +1,7 @@
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+      <h3 v-if="level1.length === 0">Sorry, we could not find related docs!</h3>
       <a-row>
         <a-col :span="6">
           <a-tree
