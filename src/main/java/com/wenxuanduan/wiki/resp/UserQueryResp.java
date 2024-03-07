@@ -1,13 +1,13 @@
-package com.wenxuanduan.wiki.domain;
+package com.wenxuanduan.wiki.resp;
 
-public class User {
-    private Long id;
+public class UserQueryResp {
+   private Long id;
 
-    private String loginName;
+   private String loginName;
 
-    private String name;
+   private String name;
 
-    private String password;
+   private String password;
 
     public Long getId() {
         return id;
@@ -52,6 +52,7 @@ public class User {
         sb.append(", name=").append(name);
         sb.append(", password=").append(password);
         sb.append("]");
+
         return sb.toString();
     }
 }

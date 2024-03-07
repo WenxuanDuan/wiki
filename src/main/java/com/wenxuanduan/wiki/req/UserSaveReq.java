@@ -1,12 +1,20 @@
-package com.wenxuanduan.wiki.domain;
+package com.wenxuanduan.wiki.req;
 
-public class User {
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
+public class UserSaveReq {
     private Long id;
 
+    @NotNull(message = "Login Name could not be NULL")
     private String loginName;
 
+    @NotNull(message = "Name could not be NULL")
     private String name;
 
+    @NotNull(message = "Password could not be NULL")
+    // @Length(min = 6, max = 20, message = "Password:6~20 characters")
+    @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$", message = "Only contain digits and English letters with length 6~20")
     private String password;
 
     public Long getId() {
