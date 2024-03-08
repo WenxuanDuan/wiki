@@ -36,6 +36,9 @@
               <a-button type="primary" @click="edit(record)">
                 Edit
               </a-button>
+              <a-button type="primary" @click="resetPassword(record)">
+                Reset Password
+              </a-button>
               <a-popconfirm
                   title="Once deleted, the user could not be restored. Confirm the deletion?"
                   ok-text="Delete"
@@ -62,6 +65,14 @@
         <a-input v-model:value="user.name" />
       </a-form-item>
       <a-form-item label="Password" v-show="!user.id">
+        <a-input v-model:value="user.password"/>
+      </a-form-item>
+    </a-form>
+  </a-modal>
+
+  <a-modal v-model:open="resetModalOpen" title="Reset Password" :confirm-loading="resetConfirmLoading" @ok="handleResetModalOk">
+    <a-form :model="user" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="New Password">
         <a-input v-model:value="user.password"/>
       </a-form-item>
     </a-form>
@@ -156,6 +167,7 @@
       const user = ref();
       const modalOpen = ref<boolean>(false);
       const confirmLoading = ref<boolean>(false);
+
       const handleModalOk = () => {
         confirmLoading.value = true;
 
@@ -211,6 +223,43 @@
         });
       };
 
+      // ---------- Reset Password  --------
+      const resetModalOpen = ref<boolean>(false);
+      const resetConfirmLoading = ref<boolean>(false);
+
+      const handleResetModalOk = () => {
+        resetConfirmLoading.value = true;
+
+        user.value.password = hexMd5(user.value.password + KEY);
+
+        axios.post("/user/reset-password", user.value).then((response) => {
+          resetConfirmLoading.value = false;
+          const data = response.data; // data = commonResp
+          if (data.success) {
+            resetModalOpen.value = false;
+
+            // reload current page
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize,
+            });
+          }
+          else {
+            message.error(data.message);
+          }
+        });
+      };
+
+      /**
+       * reset password
+       */
+      const resetPassword = (record : any) => {
+        resetModalOpen.value = true;
+        user.value = Tool.copy(record);
+        user.value.password = null;
+      };
+
+
       onMounted(() => {
         handleQuery({
           page: 1,
@@ -235,7 +284,13 @@
         confirmLoading,
         handleModalOk,
 
-        handleDelete
+        handleDelete,
+
+        resetModalOpen,
+        resetConfirmLoading,
+        handleResetModalOk,
+
+        resetPassword
       }
     }
   });

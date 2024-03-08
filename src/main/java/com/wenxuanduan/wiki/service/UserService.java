@@ -8,6 +8,7 @@ import com.wenxuanduan.wiki.exception.BusinessException;
 import com.wenxuanduan.wiki.exception.BusinessExceptionCode;
 import com.wenxuanduan.wiki.mapper.UserMapper;
 import com.wenxuanduan.wiki.req.UserQueryReq;
+import com.wenxuanduan.wiki.req.UserResetPasswordReq;
 import com.wenxuanduan.wiki.req.UserSaveReq;
 import com.wenxuanduan.wiki.resp.UserQueryResp;
 import com.wenxuanduan.wiki.resp.PageResp;
@@ -111,5 +112,14 @@ public class UserService {
         else {
             return userList.get(0);
         }
+    }
+
+
+    /**
+     * reset password
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }
