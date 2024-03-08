@@ -56,7 +56,7 @@
   <a-modal v-model:open="modalOpen" title="User Management" :confirm-loading="confirmLoading" @ok="handleModalOk">
     <a-form :model="user" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="LoginName">
-        <a-input v-model:value="user.loginName" />
+        <a-input v-model:value="user.loginName" :disabled="!!user.id"/>
       </a-form-item>
       <a-form-item label="Name">
         <a-input v-model:value="user.name" />

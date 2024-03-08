@@ -74,18 +74,19 @@ public class UserService {
 
             User userDB = selectByLoginName(req.getLoginName());
             if (ObjectUtils.isEmpty(userDB)) {
-                // add a new book
+                // add a new user
                 user.setId(snowFlake.nextId());
                 userMapper.insert(user);
             }
             else {
-                // Already exists the same loginName
+                // the same loginName already exists
                 throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
             }
         }
         else {
-            // update previous book
-            userMapper.updateByPrimaryKey(user);
+            // update previous user
+            user.setLoginName(null);
+            userMapper.updateByPrimaryKeySelective(user);
         }
     }
 
