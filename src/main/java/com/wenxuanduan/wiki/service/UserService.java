@@ -7,9 +7,11 @@ import com.wenxuanduan.wiki.domain.UserExample;
 import com.wenxuanduan.wiki.exception.BusinessException;
 import com.wenxuanduan.wiki.exception.BusinessExceptionCode;
 import com.wenxuanduan.wiki.mapper.UserMapper;
+import com.wenxuanduan.wiki.req.UserLoginReq;
 import com.wenxuanduan.wiki.req.UserQueryReq;
 import com.wenxuanduan.wiki.req.UserResetPasswordReq;
 import com.wenxuanduan.wiki.req.UserSaveReq;
+import com.wenxuanduan.wiki.resp.UserLoginResp;
 import com.wenxuanduan.wiki.resp.UserQueryResp;
 import com.wenxuanduan.wiki.resp.PageResp;
 import com.wenxuanduan.wiki.util.CopyUtil;
@@ -114,7 +116,6 @@ public class UserService {
         }
     }
 
-
     /**
      * reset password
      */
@@ -122,4 +123,30 @@ public class UserService {
         User user = CopyUtil.copy(req, User.class);
         userMapper.updateByPrimaryKeySelective(user);
     }
+
+    /**
+     * login
+     */
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDb)) {
+            // loginName doesn't exist
+            LOG.info("LoginName doesn't exist, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }
+        else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // login successfully
+                UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return userLoginResp;
+            }
+            else {
+                // password incorrect
+                LOG.info("Incorrect password, input password: {}, restored password: {}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+    }
+
+
 }

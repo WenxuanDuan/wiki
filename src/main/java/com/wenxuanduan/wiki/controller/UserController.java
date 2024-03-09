@@ -1,10 +1,12 @@
 package com.wenxuanduan.wiki.controller;
 
+import com.wenxuanduan.wiki.req.UserLoginReq;
 import com.wenxuanduan.wiki.req.UserQueryReq;
 import com.wenxuanduan.wiki.req.UserResetPasswordReq;
 import com.wenxuanduan.wiki.req.UserSaveReq;
 import com.wenxuanduan.wiki.resp.CommonResp;
 import com.wenxuanduan.wiki.resp.PageResp;
+import com.wenxuanduan.wiki.resp.UserLoginResp;
 import com.wenxuanduan.wiki.resp.UserQueryResp;
 import com.wenxuanduan.wiki.service.UserService;
 import jakarta.annotation.Resource;
@@ -47,6 +49,15 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }
