@@ -1,7 +1,10 @@
 <template>
   <a-layout-header class="header">
     <div class="logo" />
-    <a class="login-menu" @click="showLoginModal">
+    <a class="login-menu" v-show = "user.id">
+      <span>Hello: {{user.name}}</span>
+    </a>
+    <a class="login-menu" v-show = "!user.id" @click="showLoginModal">
       <span>Login</span>
     </a>
     <a-menu
@@ -50,6 +53,11 @@
   export default defineComponent({
     name: 'the-header',
     setup () {
+      // for user information after login
+      const user = ref();
+      user.value = {};
+
+      // for login
       const loginUser = ref({
         loginName: "test",
         password: "test"
@@ -71,6 +79,7 @@
           if (data.success) {
             loginModalVisible.value = false;
             message.success("Login Successfully！");
+            user.value = data.content;
           } else {
             message.error(data.message);
           }
@@ -82,7 +91,8 @@
         loginModalLoading,
         showLoginModal,
         loginUser,
-        login
+        login,
+        user
       }
     }
   });
