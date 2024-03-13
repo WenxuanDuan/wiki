@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, computed } from 'vue';
   import axios from 'axios';
   import { message } from 'ant-design-vue';
   import store from '@/store';
@@ -55,8 +55,7 @@
     name: 'the-header',
     setup () {
       // for user information after login
-      const user = ref();
-      user.value = {};
+      const user = computed(() => store.state.user);
 
       // for login
       const loginUser = ref({
@@ -80,8 +79,7 @@
           if (data.success) {
             loginModalVisible.value = false;
             message.success("Login Successfully！");
-            user.value = data.content;
-            store.commit("setUser", user.value);
+            store.commit("setUser", data.content);
           } else {
             message.error(data.message);
           }
