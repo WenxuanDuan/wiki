@@ -1,6 +1,16 @@
 <template>
   <a-layout-header class="header">
     <div class="logo" />
+    <a-popconfirm
+        title="Confirm your logout?"
+        ok-text="Yes"
+        cancel-text="Cancel"
+        @confirm="logout()"
+    >
+      <a class="login-menu" v-show = "user.id">
+        <span>Logout</span>
+      </a>
+    </a-popconfirm>
     <a class="login-menu" v-show = "user.id">
       <span>Hello: {{user.name}}</span>
     </a>
@@ -86,13 +96,28 @@
         });
       };
 
+      // Logout
+      const logout = () => {
+        console.log("Logout Started");
+        axios.get('/user/logout/' + user.value.token).then((response) => {
+          const data = response.data;
+          if (data.success) {
+            message.success("Logout Successfully！");
+            store.commit("setUser", {});
+          } else {
+            message.error(data.message);
+          }
+        });
+      };
+
       return {
         loginModalVisible,
         loginModalLoading,
         showLoginModal,
         loginUser,
         login,
-        user
+        user,
+        logout
       }
     }
   });
@@ -102,5 +127,6 @@
 .login-menu {
   float: right;
   color: white;
+  padding-left: 10px;
 }
 </style>
