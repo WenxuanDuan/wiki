@@ -7,6 +7,7 @@ import com.wenxuanduan.wiki.domain.Doc;
 import com.wenxuanduan.wiki.domain.DocExample;
 import com.wenxuanduan.wiki.mapper.ContentMapper;
 import com.wenxuanduan.wiki.mapper.DocMapper;
+import com.wenxuanduan.wiki.mapper.DocMapperCust;
 import com.wenxuanduan.wiki.req.DocQueryReq;
 import com.wenxuanduan.wiki.req.DocSaveReq;
 import com.wenxuanduan.wiki.resp.DocQueryResp;
@@ -27,6 +28,9 @@ public class DocService {
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
 
     @Resource
     private ContentMapper contentMapper;
@@ -82,6 +86,8 @@ public class DocService {
         if (ObjectUtils.isEmpty(req.getId())) {
             // add a new book
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
 
             // add content
@@ -118,6 +124,9 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+
+        // doc view count + 1
+        docMapperCust.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         }
