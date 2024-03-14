@@ -95,7 +95,7 @@ create table `user` (
                         unique key `login_name_unique` (`login_name`)
 ) engine=innodb default charset=utf8mb4 comment='User';
 
-insert into `user` (id, `login_name`, `name`, `password`) values (1, 'test', 'test', 'test');
+insert into `user` (id, `login_name`, `name`, `password`) values (1, 'test', 'test', 'e70e2222a9d67c4f2eae107533359aa4');
 
 drop table if exists `demo`;
 create table `demo` (
