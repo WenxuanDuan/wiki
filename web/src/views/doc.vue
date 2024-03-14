@@ -15,6 +15,14 @@
           </a-tree>
         </a-col>
         <a-col :span="18">
+          <div>
+            <h2>{{doc.name}}</h2>
+            <div>
+              <span>Viewed：{{doc.viewCount}}</span> &nbsp; &nbsp;
+              <span>Voted：{{doc.voteCount}}</span>
+            </div>
+            <a-divider style="height: 2px; background-color: #9999cc"/>
+          </div>
           <div class="wangeditor" :innerHTML="html"></div>
         </a-col>
       </a-row>
@@ -37,6 +45,9 @@ export default defineComponent({
     const html = ref();
     const defaultSelectedKeys = ref();
     defaultSelectedKeys.value = [];
+    // current selected doc
+    const doc = ref();
+    doc.value = {};
 
     /**
      * [{
@@ -80,6 +91,8 @@ export default defineComponent({
           if (Tool.isNotEmpty(level1)) {
             defaultSelectedKeys.value = [level1.value[0].id];
             handleQueryContent(level1.value[0].id);
+            // display doc information
+            doc.value = level1.value[0];
           }
         }
         else {
@@ -91,6 +104,8 @@ export default defineComponent({
     const onSelect = (selectedKeys: any, info: any) => {
       console.log('selected', selectedKeys, info);
       if (Tool.isNotEmpty(selectedKeys)) {
+        // load doc information after selected one node
+        doc.value = info.selectedNodes[0];
         // load content
         handleQueryContent(selectedKeys[0]);
       }
@@ -104,7 +119,8 @@ export default defineComponent({
       level1,
       html,
       onSelect,
-      defaultSelectedKeys
+      defaultSelectedKeys,
+      doc
     }
   }
 });
