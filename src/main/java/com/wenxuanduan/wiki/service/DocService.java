@@ -134,4 +134,11 @@ public class DocService {
             return content.getContent();
         }
     }
+
+    /**
+     * Vote
+     */
+    public void vote(Long id) {
+        docMapperCust.increaseVoteCount(id);
+    }
 }
