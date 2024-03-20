@@ -1,9 +1,11 @@
 package com.wenxuanduan.wiki.job;
 
 import com.wenxuanduan.wiki.service.DocService;
+import com.wenxuanduan.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +17,16 @@ public class DocJob {
     @Resource
     private DocService docService;
 
+    @Resource
+    private  SnowFlake snowFlake;
+
     /**
      * update ebook doc information every 30 seconds
      */
     @Scheduled(cron = "5/30 * * * * ?")
     public void cron() {
+        // add log id
+        MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
         LOG.info("Update docs under ebooks STARTED");
         long start = System.currentTimeMillis();
         docService.updateEbookInfo();
