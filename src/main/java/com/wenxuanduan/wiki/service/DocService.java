@@ -18,6 +18,7 @@ import com.wenxuanduan.wiki.util.CopyUtil;
 import com.wenxuanduan.wiki.util.RedisUtil;
 import com.wenxuanduan.wiki.util.RequestContext;
 import com.wenxuanduan.wiki.util.SnowFlake;
+import com.wenxuanduan.wiki.websocket.WebSocketServer;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ public class DocService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private WebSocketServer webSocketServer;
 
     public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
@@ -153,6 +157,10 @@ public class DocService {
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
+
+        // send message
+        Doc docDb = docMapper.selectByPrimaryKey(id);
+        webSocketServer.sendInfo("[" + docDb.getName() + "] is recommended!");
     }
 
     public void updateEbookInfo() {
