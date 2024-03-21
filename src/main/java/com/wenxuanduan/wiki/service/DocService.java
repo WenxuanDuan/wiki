@@ -18,11 +18,12 @@ import com.wenxuanduan.wiki.util.CopyUtil;
 import com.wenxuanduan.wiki.util.RedisUtil;
 import com.wenxuanduan.wiki.util.RequestContext;
 import com.wenxuanduan.wiki.util.SnowFlake;
-import com.wenxuanduan.wiki.websocket.WebSocketServer;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -44,10 +45,10 @@ public class DocService {
     private SnowFlake snowFlake;
 
     @Resource
-    private RedisUtil redisUtil;
+    public RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    public WsService wsService;
 
     public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
@@ -91,6 +92,7 @@ public class DocService {
     /**
      * Save
      */
+    @Transactional
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content content = CopyUtil.copy(req, Content.class);
@@ -160,7 +162,8 @@ public class DocService {
 
         // send message
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("[" + docDb.getName() + "] is recommended!");
+        String logId = MDC.get("LOG_ID");
+        wsService.sendInfo("[" + docDb.getName() + "] is recommended!", logId);
     }
 
     public void updateEbookInfo() {
