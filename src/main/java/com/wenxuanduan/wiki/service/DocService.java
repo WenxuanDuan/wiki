@@ -19,6 +19,7 @@ import com.wenxuanduan.wiki.util.RedisUtil;
 import com.wenxuanduan.wiki.util.RequestContext;
 import com.wenxuanduan.wiki.util.SnowFlake;
 import jakarta.annotation.Resource;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -49,6 +50,9 @@ public class DocService {
 
     @Resource
     public WsService wsService;
+
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
@@ -154,7 +158,7 @@ public class DocService {
     public void vote(Long id) {
         // use remote IP + doc.id as key，could not repeat within 24 hours
         String ip = RequestContext.getRemoteAddr();
-        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
             docMapperCust.increaseVoteCount(id);
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
@@ -163,7 +167,8 @@ public class DocService {
         // send message
         Doc docDb = docMapper.selectByPrimaryKey(id);
         String logId = MDC.get("LOG_ID");
-        wsService.sendInfo("[" + docDb.getName() + "] is recommended!", logId);
+//        wsService.sendInfo("[" + docDb.getName() + "] is voted!", logId);
+        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "[" + docDb.getName() + "] is voted!");
     }
 
     public void updateEbookInfo() {
