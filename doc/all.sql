@@ -100,16 +100,16 @@ insert into `user` (id, `login_name`, `name`, `password`) values (1, 'test', 'te
 -- ebook snapshot
 drop table if exists `ebook_snapshot`;
 create table `ebook_snapshot` (
-                                  `id` bigint auto_increment not null comment 'id',
-                                  `ebook_id` bigint not null default 0 comment 'ebook id',
-                                  `date` date not null comment 'snapshot date',
-                                  `view_count` int not null default 0 comment 'view count',
-                                  `vote_count` int not null default 0 comment 'vote count',
-                                  `view_increase` int not null default 0 comment 'view increment',
-                                  `vote_increase` int not null default 0 comment 'vote increment',
-                                  primary key (`id`)
+  `id` bigint auto_increment not null comment 'id',
+  `ebook_id` bigint not null default 0 comment 'ebook id',
+  `date` date not null comment 'snapshot date',
+  `view_count` int not null default 0 comment 'view count',
+  `vote_count` int not null default 0 comment 'vote count',
+  `view_increase` int not null default 0 comment 'view increment',
+  `vote_increase` int not null default 0 comment 'vote increment',
+  primary key (`id`),
+  unique key `ebook_id_date_unique` (`ebook_id`, `date`)
 ) engine=innodb default charset=utf8mb4 comment='ebook snapshot';
-
 
 drop table if exists `demo`;
 create table `demo` (
