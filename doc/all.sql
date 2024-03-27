@@ -97,6 +97,20 @@ create table `user` (
 
 insert into `user` (id, `login_name`, `name`, `password`) values (1, 'test', 'test', 'e70e2222a9d67c4f2eae107533359aa4');
 
+-- ebook snapshot
+drop table if exists `ebook_snapshot`;
+create table `ebook_snapshot` (
+                                  `id` bigint auto_increment not null comment 'id',
+                                  `ebook_id` bigint not null default 0 comment 'ebook id',
+                                  `date` date not null comment 'snapshot date',
+                                  `view_count` int not null default 0 comment 'view count',
+                                  `vote_count` int not null default 0 comment 'vote count',
+                                  `view_increase` int not null default 0 comment 'view increment',
+                                  `vote_increase` int not null default 0 comment 'vote increment',
+                                  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='ebook snapshot';
+
+
 drop table if exists `demo`;
 create table `demo` (
                         `id` bigint not null comment 'id',
