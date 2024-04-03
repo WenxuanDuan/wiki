@@ -179,7 +179,7 @@
             level1.value = Tool.array2Tree(docs.value, 0);
             console.log("Tree Architecture: ", level1);
 
-            treeSelectData.value = Tool.copy(level1.value);
+            treeSelectData.value = Tool.copy(level1.value) || [];
             treeSelectData.value.unshift({id: 0, name: 'NULL'});
           }
           else {
@@ -342,7 +342,7 @@
           ebookId: route.query.ebookId
         };
 
-        treeSelectData.value = Tool.copy(level1.value);
+        treeSelectData.value = Tool.copy(level1.value) || [];
 
         // add a NULL for select tree
         treeSelectData.value.unshift({id: 0, name: 'NULL'});
