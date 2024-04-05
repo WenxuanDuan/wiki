@@ -261,9 +261,11 @@ export default defineComponent({
 .tip {
   padding: 10px 5px;
   margin-bottom: 20px;
-  color: grey;
   border: 1px solid transparent;
   background: linear-gradient(white,white) padding-box,repeating-linear-gradient(-45deg, black 0, black 25%, white 0, white 50%) 0/.6em .6em;
   animation:ants 12s linear infinite;
+}
+.tip b{
+  color: grey;
 }
 </style>
