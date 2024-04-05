@@ -3,6 +3,7 @@ package com.wenxuanduan.wiki.config;
 import com.wenxuanduan.wiki.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
@@ -26,7 +27,13 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                         "/doc/vote/**",
                         "/doc/find-content/**",
                         "ebook-snapshot/**",
-                        "/ebook/upload/avatar"
+                        "/ebook/upload/avatar",
+                        "/file/**"
                 );
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/file/**").addResourceLocations("file:D:/file/wiki/");
     }
 }
