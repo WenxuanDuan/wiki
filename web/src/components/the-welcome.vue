@@ -95,7 +95,7 @@
     </a-row>
     <br>
     <a-row>
-      <a-col :span="24">
+      <a-col :span="24" id="main-col">
         <div id="main" style="width: 100%;height:300px;"></div>
       </a-col>
     </a-row>
@@ -136,6 +136,11 @@ export default defineComponent({
     };
 
     const init30DayEcharts = (list: any) => {
+      const mainDom = document.getElementById('main-col');
+      if (mainDom) {
+        mainDom.innerHTML = '<div id="main" style="width: 100%;height:300px;"></div>';
+      }
+
       // 基于准备好的dom，初始化echarts实例
       const myChart = echarts.init(document.getElementById('main'));
 
