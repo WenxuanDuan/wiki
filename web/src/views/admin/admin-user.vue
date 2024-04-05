@@ -65,7 +65,7 @@
         <a-input v-model:value="user.name" />
       </a-form-item>
       <a-form-item label="Password" v-show="!user.id">
-        <a-input v-model:value="user.password"/>
+        <a-input v-model:value="user.password" type="password"/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -73,7 +73,7 @@
   <a-modal v-model:open="resetModalOpen" title="Reset Password" :confirm-loading="resetConfirmLoading" @ok="handleResetModalOk">
     <a-form :model="user" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
       <a-form-item label="New Password">
-        <a-input v-model:value="user.password"/>
+        <a-input v-model:value="user.password" type="password"/>
       </a-form-item>
     </a-form>
   </a-modal>
