@@ -61,7 +61,7 @@
             ref="select"
             v-model:value="category.parent"
         >
-          <a-select-option value="0">
+          <a-select-option :value="0">
             NULL
           </a-select-option>
           <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="category.id === c.id">
@@ -96,11 +96,11 @@
           title: 'Name',
           dataIndex: 'name'
         },
-        {
-          title: 'Parent Category',
-          key: 'parent',
-          dataIndex: 'parent'
-        },
+        // {
+        //   title: 'Parent Category',
+        //   key: 'parent',
+        //   dataIndex: 'parent'
+        // },
         {
           title: 'Sort',
           dataIndex: 'sort'
