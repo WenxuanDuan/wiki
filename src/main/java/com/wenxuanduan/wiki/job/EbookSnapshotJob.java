@@ -21,7 +21,7 @@ public class EbookSnapshotJob {
     @Resource
     private SnowFlake snowFlake;
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void doSnapshot() {
         // add log id
         MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));

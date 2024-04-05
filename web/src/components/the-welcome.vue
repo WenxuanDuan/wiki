@@ -1,5 +1,11 @@
 <template>
   <div>
+    <a-alert
+        class="tip"
+        message="Tip：The statistics are delayed by about 1 minute."
+        type="info"
+        closable
+    />
     <a-row>
       <a-col :span="24">
         <a-card>
@@ -246,3 +252,8 @@ export default defineComponent({
   }
 });
 </script>
+<style scoped>
+.tip {
+  margin-bottom: 20px;
+}
+</style>
