@@ -17,12 +17,22 @@
           </a-form-item>
         </a-form>
       </p>
+      <p>
+        <a-alert
+            class="tip"
+            message="Tips: The categories here will be displayed in the sub-menu in the homepage"
+            type="info"
+            closable
+        />
+      </p>
       <a-table
+          v-if="level1.length > 0"
           :columns="columns"
           :row-key="record => record.id"
           :data-source="level1"
           :loading="loading"
           :pagination="false"
+          :defaultExpandAllRows="true"
       >
 
         <template #bodyCell="{ column, text, record }">
@@ -122,6 +132,7 @@
        * }]
        */
       const level1 = ref();
+      level1.value = [];
 
       /**
        * data query

@@ -2,7 +2,7 @@
   <div>
     <a-alert
         class="tip"
-        message="Tip：The statistics are delayed by about 1 minute."
+        message="Tips：The statistics are delayed by about 1 minute."
         type="info"
         closable
     />
